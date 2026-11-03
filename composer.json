@@ -1,7 +1,10 @@
 {
     "name": "labwes/worksphere-core",
     "autoload": {
-        "psr-4": { "App\\": "app/" }
+        "psr-4": {
+            "App\\": "app/"
+        },
+        "files": ["app/helpers.php"]
     },
     "require": {
         "php": ">=8.1",

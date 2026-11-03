@@ -6,6 +6,7 @@ require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../config/database.php';
 
 Dotenv\Dotenv::createImmutable(__DIR__ . '/..')->load();
+session_set_cookie_params(['httponly' => true, 'samesite' => 'Lax']);
 session_start();
 
 $router = new App\Router();
