@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\{Invitation, Workspace};
+use App\Models\{ActivityLog, Invitation, Stats, Workspace};
 
 class WorkspaceController
 {
@@ -32,12 +32,14 @@ class WorkspaceController
         }
 
         $id = Workspace::create($name, auth_user()['id']);
+        ActivityLog::record($id, auth_user()['id'], 'workspace.created', 'created the workspace');
         redirect("/workspaces/$id");
     }
 
     public function show(string $id): void
     {
-        $workspace = Workspace::findForUser((int) $id, auth_user()['id']);
+        $user = auth_user();
+        $workspace = Workspace::findForUser((int) $id, $user['id']);
 
         // 404, not 403: don't reveal that someone else's workspace exists.
         if (!$workspace) {
@@ -53,6 +55,8 @@ class WorkspaceController
             'pending'     => $canInvite ? Invitation::pendingForWorkspace((int) $id) : [],
             'inviteLink'  => pull('invite_link', null),
             'inviteError' => pull('invite_error', null),
+            'stats'       => Stats::forWorkspace((int) $id, $user['id']),
+            'activity'    => ActivityLog::recent((int) $id),
         ]);
     }
 }

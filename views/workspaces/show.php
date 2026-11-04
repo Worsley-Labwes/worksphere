@@ -10,6 +10,52 @@
 <?php endif; ?>
 <?php if ($inviteError): ?><p class="error"><?= e($inviteError) ?></p><?php endif; ?>
 
+<h3>Overview</h3>
+<div class="stats">
+    <div class="stat"><strong><?= (int) $stats['total_projects'] ?></strong><span>Projects</span></div>
+    <div class="stat"><strong><?= (int) $stats['total_tasks'] ?></strong><span>Tasks</span></div>
+    <div class="stat"><strong><?= (int) $stats['completion'] ?>%</strong><span>Completed</span></div>
+    <div class="stat"><strong class="<?= $stats['overdue'] ? 'overdue' : '' ?>"><?= (int) $stats['overdue'] ?></strong><span>Overdue</span></div>
+    <div class="stat"><strong><?= (int) $stats['mine'] ?></strong><span>My open tasks</span></div>
+</div>
+<p class="muted">
+    To do <?= (int) $stats['tasks']['todo'] ?> ·
+    In progress <?= (int) $stats['tasks']['in_progress'] ?> ·
+    Done <?= (int) $stats['tasks']['done'] ?>
+</p>
+
+<?php if ($stats['team']): ?>
+    <h3>Team productivity</h3>
+    <table>
+        <tr>
+            <th>Member</th>
+            <th>Assigned</th>
+            <th>Done</th>
+        </tr>
+        <?php foreach ($stats['team'] as $t): ?>
+            <tr>
+                <td><?= e($t['name']) ?></td>
+                <td><?= (int) $t['assigned'] ?></td>
+                <td><?= (int) $t['done'] ?></td>
+            </tr>
+        <?php endforeach; ?>
+    </table>
+<?php endif; ?>
+
+<h3>Recent activity</h3>
+<?php if (!$activity): ?>
+    <p class="muted">Nothing yet.</p>
+<?php else: ?>
+    <ul>
+        <?php foreach ($activity as $a): ?>
+            <li>
+                <strong><?= e($a['user_name'] ?? 'Someone') ?></strong> <?= e($a['description']) ?>
+                <span class="muted">· <?= e($a['created_at']) ?></span>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+<?php endif; ?>
+
 <h3>Members</h3>
 <ul>
     <?php foreach ($members as $m): ?>
@@ -25,7 +71,7 @@
             <input type="email" name="email">
         </label>
         <label>Role
-            <select name="role" style="width:100%;padding:.5rem;margin-top:.25rem">
+            <select name="role">
                 <option value="member">Member</option>
                 <?php if ($workspace['role'] === 'owner'): ?>
                     <option value="admin">Admin</option>

@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\{Invitation, Workspace};
+use App\Models\{ActivityLog, Invitation, Workspace};
 
 class InvitationController
 {
@@ -40,6 +40,8 @@ class InvitationController
         }
 
         $token = Invitation::create((int) $workspaceId, $email, $role, $user['id']);
+        ActivityLog::record((int) $workspaceId, $user['id'], 'invitation.sent', "invited $email as $role");
+
         $_SESSION['invite_link'] = "http://{$_SERVER['HTTP_HOST']}/invitations/$token";
         redirect("/workspaces/$workspaceId");
     }
@@ -53,6 +55,12 @@ class InvitationController
     {
         $invitation = $this->load($token);
         Invitation::accept($invitation, auth_user()['id']);
+        ActivityLog::record(
+            (int) $invitation['workspace_id'],
+            auth_user()['id'],
+            'member.joined',
+            "joined the workspace as {$invitation['role']}"
+        );
         redirect('/workspaces/' . (int) $invitation['workspace_id']);
     }
 

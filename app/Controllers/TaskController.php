@@ -2,10 +2,12 @@
 
 namespace App\Controllers;
 
-use App\Models\{Project, Task, Workspace};
+use App\Models\{ActivityLog, Project, Task, Workspace};
 
 class TaskController extends BaseController
 {
+    private const STATUS_LABELS = ['todo' => 'To do', 'in_progress' => 'In progress', 'done' => 'Done'];
+
     public function store(string $id, string $projectId): void
     {
         $workspace = $this->workspace($id);
@@ -50,6 +52,7 @@ class TaskController extends BaseController
         }
 
         Task::create($wid, $pid, $data, auth_user()['id']);
+        ActivityLog::record($wid, auth_user()['id'], 'task.created', "added task “{$data['title']}” to “{$project['name']}”");
         redirect("/workspaces/$wid/projects/$pid");
     }
 
@@ -68,11 +71,12 @@ class TaskController extends BaseController
         }
 
         $status = $_POST['status'] ?? '';
-        if (!in_array($status, ['todo', 'in_progress', 'done'], true)) {
+        if (!isset(self::STATUS_LABELS[$status])) {
             abort(422, 'Invalid status.');
         }
 
         Task::updateStatus((int) $task['id'], $wid, $status);
+        ActivityLog::record($wid, $me, 'task.moved', "moved “{$task['title']}” to " . self::STATUS_LABELS[$status]);
         redirect("/workspaces/$wid/projects/" . (int) $task['project_id']);
     }
 
@@ -88,6 +92,7 @@ class TaskController extends BaseController
         }
 
         Task::delete((int) $task['id'], $wid);
+        ActivityLog::record($wid, auth_user()['id'], 'task.deleted', "deleted task “{$task['title']}”");
         redirect("/workspaces/$wid/projects/" . (int) $task['project_id']);
     }
 }

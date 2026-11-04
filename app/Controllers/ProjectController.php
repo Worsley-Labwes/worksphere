@@ -2,7 +2,7 @@
 
 namespace App\Controllers;
 
-use App\Models\{Project, Task, Workspace};
+use App\Models\{ActivityLog, Project, Task, Workspace};
 
 class ProjectController extends BaseController
 {
@@ -46,6 +46,7 @@ class ProjectController extends BaseController
         }
 
         $projectId = Project::create($wid, $data, auth_user()['id']);
+        ActivityLog::record($wid, auth_user()['id'], 'project.created', "created project “{$data['name']}”");
         redirect("/workspaces/$wid/projects/$projectId");
     }
 
@@ -96,6 +97,13 @@ class ProjectController extends BaseController
         }
 
         Project::update($pid, $wid, $data);
+
+        if ($project['status'] !== $data['status']) {
+            ActivityLog::record($wid, auth_user()['id'], 'project.status', "marked project “{$data['name']}” as {$data['status']}");
+        } else {
+            ActivityLog::record($wid, auth_user()['id'], 'project.updated', "updated project “{$data['name']}”");
+        }
+
         redirect("/workspaces/$wid/projects/$pid");
     }
 

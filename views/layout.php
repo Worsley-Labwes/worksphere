@@ -150,6 +150,29 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: .75rem;
+            margin: 1rem 0;
+        }
+
+        .stat {
+            background: #f6f6f6;
+            border-radius: 8px;
+            padding: .75rem;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 1.6rem;
+        }
+
+        .stat span {
+            color: #666;
+            font-size: .85rem;
+        }
     </style>
 </head>
 
