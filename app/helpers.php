@@ -57,6 +57,8 @@ function verify_csrf(): void
     }
 }
 
+// Sends users back to the page they originally wanted after logging in.
+// Only local paths are accepted, so it can't be used to redirect off-site.
 function intended_url(string $default = '/dashboard'): string
 {
     $url = pull('intended', null);
@@ -65,4 +67,10 @@ function intended_url(string $default = '/dashboard'): string
         return $url;
     }
     return $default;
+}
+
+function valid_date(string $d): bool
+{
+    $dt = \DateTime::createFromFormat('Y-m-d', $d);
+    return $dt !== false && $dt->format('Y-m-d') === $d;
 }

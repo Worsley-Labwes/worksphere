@@ -74,4 +74,25 @@ class Workspace
         $stmt->execute([$workspaceId, $email]);
         return (bool) $stmt->fetchColumn();
     }
+
+    public static function isMember(int $workspaceId, int $userId): bool
+    {
+        $stmt = Database::connect()->prepare(
+            'SELECT 1 FROM workspace_members WHERE workspace_id = ? AND user_id = ? LIMIT 1'
+        );
+        $stmt->execute([$workspaceId, $userId]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    public static function memberList(int $workspaceId): array
+    {
+        $stmt = Database::connect()->prepare(
+            'SELECT u.id, u.name FROM workspace_members m
+             JOIN users u ON u.id = m.user_id
+             WHERE m.workspace_id = ?
+             ORDER BY u.name'
+        );
+        $stmt->execute([$workspaceId]);
+        return $stmt->fetchAll();
+    }
 }

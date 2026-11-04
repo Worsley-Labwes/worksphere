@@ -1,5 +1,6 @@
 <h2><?= e($workspace['name']) ?></h2>
 <p>Your role: <strong><?= e($workspace['role']) ?></strong></p>
+<p><a href="/workspaces/<?= (int) $workspace['id'] ?>/projects">View projects →</a></p>
 
 <?php if ($inviteLink): ?>
     <p style="background:#e8f5e9;padding:.75rem;word-break:break-all">
