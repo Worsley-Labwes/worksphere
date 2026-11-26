@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\ActivityController;
+use App\Http\Controllers\Api\StatsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\InvitationController;
 use App\Http\Controllers\Api\ProjectController;
@@ -25,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::scopeBindings()->group(function () {
         Route::get('/workspaces/{workspace}/invitations', [InvitationController::class, 'index']);
         Route::post('/workspaces/{workspace}/invitations', [InvitationController::class, 'store']);
+        Route::get('/workspaces/{workspace}/activity', [ActivityController::class, 'index']);
+        Route::get('/workspaces/{workspace}/stats', StatsController::class);
 
         Route::apiResource('workspaces.projects', ProjectController::class)->except('destroy');
 
